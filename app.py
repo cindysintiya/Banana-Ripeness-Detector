@@ -38,48 +38,50 @@ take_photo = input_container.button('Take a Photo', use_container_width=True)
 if take_photo:
   capture()
 
+def predict(image: Image):
+  list_img = preprocess_input(st.session_state.image)
+  try:
+    yellow_mask, green_mask, img_edge = list_img[0]
+    combined_img = list_img[1]
+    x_predict = [combined_img]
+    x_predict = np.array(x_predict, dtype=float)
+    x_predict /= 255.0
+    
+    prediction = 0.4
+    # comment code above when model is exported
+    # uncomment code below when model is exported
+    # prediction = model.predict(predict)
+    if (prediction < 0.5):
+      st.success('Pisang Mentah')
+    else:
+      st.warning('Pisang Matang')
+  except:
+    st.error('Bukan Pisang')
+  
+  with st.expander("See Details"):
+    col1, col2, = st.columns(2, gap='small')
+    col3, col4 = st.columns(2, gap='small')
+    with col1:
+      st.write('Original Image')
+      st.image(st.session_state.image, width=200)
+    with col2:
+      st.write('Yellow Masked')
+      st.image(yellow_mask, width=200)
+    with col3:
+      st.write('Green Masked')
+      st.image(green_mask, width=200)
+    with col4:
+      st.write('Edge Detection')
+      st.image(img_edge, width=200)
+        
 if "image" in st.session_state:
   st.header('Uploaded Image')
   st.write(st.session_state.image)
   if st.button('Check Ripeness'):
     st.header('Prediction Result')
+    with st.spinner('Loading Prediction...'):
+      predict(st.session_state.image)
     
-    list_img = preprocess_input(st.session_state.image)
-    try:
-      yellow_mask, green_mask, img_edge = list_img[0]
-      combined_img = list_img[1]
-      x_predict = [combined_img]
-      x_predict = np.array(x_predict, dtype=float)
-      x_predict /= 255.0
-      
-      prediction = 0.4
-      # comment code above when model is exported
-      # uncomment code below when model is exported
-      # prediction = model.predict(predict)
-      if (prediction < 0.5):
-        st.success('Pisang Mentah')
-      else:
-        st.warning('Pisang Matang')
-    except:
-      st.error('Bukan Pisang')
-    
-    with st.expander("See Details"):
-      col1, col2, = st.columns(2, gap='small')
-      col3, col4 = st.columns(2, gap='small')
-      with col1:
-        st.write('Original Image')
-        st.image(st.session_state.image, width=200)
-      with col2:
-        st.write('Yellow Masked')
-        st.image(yellow_mask, width=200)
-      with col3:
-        st.write('Green Masked')
-        st.image(green_mask, width=200)
-      with col4:
-        st.write('Edge Detection')
-        st.image(img_edge, width=200)
-
-
 # footer
 footer_html = """
 <style>
