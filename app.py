@@ -34,7 +34,7 @@ def load_model():
   return model
 
 
-def process_prediction(uploaded_file):
+def process_prediction(uploaded_file, with_discrete):
   next_predict = False
   st.markdown("<h2 style='text-align: center;'>- Preprocessed Image -</h2>", unsafe_allow_html=True)
   with st.spinner("Processing your file..."):
@@ -70,11 +70,12 @@ def process_prediction(uploaded_file):
         st.success("Objek di atas dinyatakan sebagai pisang MENTAH dengan tingkat kematangan {:.5f}%".format(prediction[0][0]*100))
       else:
         st.warning("Objek di atas dinyatakan sebagai pisang MATANG dengan tingkat kematangan {:.5f}%".format(prediction[0][0]*100))
-
-    st.markdown("<h2 style='text-align: center;'>- Discrete from Each Layer -</h2>", unsafe_allow_html=True)
-    with st.spinner("Getting Each Layers' Discrete..."):
-      with st.expander("See Details"):
-        get_discrete(predict_img)
+    
+    if with_discrete:
+      st.markdown("<h2 style='text-align: center;'>- Discrete from Each Layer -</h2>", unsafe_allow_html=True)
+      with st.spinner("Getting Each Layers' Discrete..."):
+        with st.expander("See Details"):
+          get_discrete(predict_img)
 
 
 def get_discrete(predict_img) :
@@ -160,9 +161,16 @@ if "image" in st.session_state:
   # Display images in 2nd column only
   with col2:
     st.image(st.session_state.image, caption="User's uploaded Banana Image" if st.session_state.source=="upload" else "User's captured Banana Image", use_container_width=True)
-  predicting = st.button("Predict Ripeness", use_container_width=True)
+
+  colA, colB = st.columns(2)
+  with colA:
+    predicting = st.button("Predict Ripeness", use_container_width=True)
+  with colB:
+    predictingDiscrete = st.button("Predict Ripeness and Get Discrete", use_container_width=True)
   if predicting:
-    process_prediction(st.session_state.image)
+    process_prediction(st.session_state.image, False)
+  elif predictingDiscrete:
+    process_prediction(st.session_state.image, True)
 
 
 footer_html = """
