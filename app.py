@@ -12,7 +12,13 @@ st.set_page_config(
   page_title="Bababa-babanana",
   page_icon="🍌",
   menu_items={
-    "About": "# Tugas Deep Learning"
+    "About": """
+      ### Deep Learning (by: CDEF)
+      * 211110347 - [Cindy Sintiya](https://github.com/cindysintiya)
+      * 211110933 - [Dhea Romantika Marpaung](https://github.com/aadeeee)
+      * 211110101 - [Erin Gunawan](https://github.com/eringnwn)
+      * 211111610 - [Farrell Rio Fa](https://github.com/r10f)
+    """
   }
 )
 
@@ -21,16 +27,18 @@ model, model2 = None, None
 def load_model():
   global model, model2
   if model is None:
-    with st.spinner("Loading model for the first time"):
-      import tensorflow as tf
-      from tensorflow.keras import Model
+    _, col_mid, _ = st.columns([1.25, 2, 1])
+    with col_mid:
+      with st.spinner("Loading model for the first time..."):
+        import tensorflow as tf
+        from tensorflow.keras import Model
 
-      model = tf.keras.models.load_model('model/my_model.keras')
-      model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-      
-      # Redefine model to output right after the first hidden layer
-      ixs = [2,4,6]
-      model2 = Model(inputs=model.inputs, outputs=[model.layers[i].output for i in ixs])  
+        model = tf.keras.models.load_model('model/my_model.keras')
+        model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+        
+        # Redefine model to output right after the first hidden layer
+        ixs = [2,4,6]
+        model2 = Model(inputs=model.inputs, outputs=[model.layers[i].output for i in ixs])  
   return model
 
 
@@ -59,8 +67,8 @@ def process_prediction(uploaded_file, with_discrete):
 
   if next_predict :
     st.markdown("<h2 style='text-align: center;'>- Predicting Ripeness -</h2>", unsafe_allow_html=True)
+    load_model()
     with st.spinner("Predicting..."):
-      load_model()
       predict_img = [combined_image]
       predict_img = np.array(predict_img, dtype=float)
       predict_img /= 255.0
@@ -128,7 +136,7 @@ with col1:
   st.image("https://www.shutterstock.com/image-vector/banana-relax-sunglasses-cartoon-mascot-600nw-2402786913.jpg")
 with col2:
   st.markdown("<h1 style='text-align: center;'>Banana Ripeness Detector</h1>", unsafe_allow_html=True)
-    
+
 input_container = st.container(border=True)
 uploaded_file = input_container.file_uploader(
   label="Upload a Banana Image",
@@ -140,7 +148,7 @@ if uploaded_file is not None:
 else :
   # Remove uploaded image and prepare for capturing
   if "source" in st.session_state and st.session_state.source == "upload" and "image" in st.session_state:
-      del st.session_state.image
+    del st.session_state.image
 
   @st.dialog("Take a Photo")
   def capture_image():
@@ -157,20 +165,22 @@ else :
     capture_image()
 
 if "image" in st.session_state:
-  col1, col2, col3 = st.columns([1, 3, 1])  # Adjust column widths as needed
+  _, col_mid, _ = st.columns([1, 3, 1])  # Adjust column widths as needed
   # Display images in 2nd column only
-  with col2:
+  with col_mid:
     st.image(st.session_state.image, caption="User's uploaded Banana Image" if st.session_state.source=="upload" else "User's captured Banana Image", use_container_width=True)
 
-  colA, colB = st.columns(2)
-  with colA:
-    predicting = st.button("Predict Ripeness", use_container_width=True)
-  with colB:
-    predictingDiscrete = st.button("Predict Ripeness and Get Discrete", use_container_width=True)
+  # col1, col2 = st.columns([2.25, 1])
+  # with col1:
+  #   predicting = st.button("Predict Ripeness", use_container_width=True)
+  # with col2:
+  #   with_discrete = st.checkbox("Show each layer's discrete")
+  
+  predicting = st.button("Predict Ripeness", use_container_width=True)
+  with_discrete = st.checkbox("Show each layer's discrete")
+
   if predicting:
-    process_prediction(st.session_state.image, False)
-  elif predictingDiscrete:
-    process_prediction(st.session_state.image, True)
+    process_prediction(st.session_state.image, with_discrete)
 
 
 footer_html = """
@@ -178,8 +188,8 @@ footer_html = """
     footer {
       position: fixed;
       left: 0;
-      padding: 10px;
       bottom: 0;
+      padding: 10px;
       width: 100%;
       background-color: #FDFD96;
       color: black;
