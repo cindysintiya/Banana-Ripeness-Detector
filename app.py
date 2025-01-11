@@ -154,6 +154,7 @@ else :
   def capture_image():
     st.write("Take a picture of a piece of banana. Make sure it's fully visible and not blurry.")
     picture = st.camera_input("Take a picture")
+    st.write("NOTE: For mobile user, click on 'Browse files', and then choose 'Camera'.")
     if picture:
       st.session_state.image = picture
       st.rerun()

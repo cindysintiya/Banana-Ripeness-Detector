@@ -1,5 +1,9 @@
-flask
+streamlit
 numpy
+scikit-learn
 matplotlib
 opencv-python-headless
+opencv-python
 pillow
+rembg
+tensorflow
