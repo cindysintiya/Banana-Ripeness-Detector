@@ -54,7 +54,7 @@ def process_prediction(uploaded_file, with_discrete):
     with col1:
       st.image(img_clean, caption="Segmentation", use_container_width=True)
     with col2:
-      st.image(img_edge, caption="Egde", use_container_width=True)
+      st.image(img_edge, caption="Edge", use_container_width=True)
     with col3:
       st.image(yellow_mask, caption="Yellow Mask", use_container_width=True)
     with col4:
@@ -63,7 +63,7 @@ def process_prediction(uploaded_file, with_discrete):
     if combined_image is not None:
       next_predict = True
     else:
-      st.error("Classified as Not a Banana based on edge density.")
+      st.error("Object classified as NOT BANANA based on edge strenght and edge density.")
 
   if next_predict :
     st.markdown("<h2 style='text-align: center;'>- Predicting Ripeness -</h2>", unsafe_allow_html=True)
@@ -75,9 +75,9 @@ def process_prediction(uploaded_file, with_discrete):
       prediction = model.predict(predict_img)
 
       if (prediction < 0.5):
-        st.success("Objek di atas dinyatakan sebagai pisang MENTAH dengan tingkat kematangan {:.5f}%".format(prediction[0][0]*100))
+        st.success("Object classified as UNRIPE BANANA with ripeness level {:.5f}%".format(prediction[0][0]*100))
       else:
-        st.warning("Objek di atas dinyatakan sebagai pisang MATANG dengan tingkat kematangan {:.5f}%".format(prediction[0][0]*100))
+        st.warning("Object classified as RIPE BANANA with ripeness level {:.5f}%".format(prediction[0][0]*100))
     
     if with_discrete:
       st.markdown("<h2 style='text-align: center;'>- Discrete from Each Layer -</h2>", unsafe_allow_html=True)
@@ -127,7 +127,7 @@ def get_discrete(predict_img) :
   # Hasil flatten layer 6 sbg input LSTM
   flatten_map = feature_maps[2:3][0][0]
   st.markdown("<h3 style='text-align: center;'>- 6th Layer: Flatten -</h3>", unsafe_allow_html=True)
-  st.write(np.vectorize(lambda x: f'{x:.3f}')(flatten_map).reshape(1, -1))
+  st.write(flatten_map.reshape(1, -1))
 
 
 # Main page
