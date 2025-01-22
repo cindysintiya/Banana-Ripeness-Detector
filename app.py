@@ -63,7 +63,7 @@ def process_prediction(uploaded_file, with_discrete):
     if combined_image is not None:
       next_predict = True
     else:
-      st.error("Object classified as NOT BANANA based on edge strenght and edge density.")
+      st.error("Object classified as NOT BANANA based on edge strength and edge density.")
 
   if next_predict :
     st.markdown("<h2 style='text-align: center;'>- Predicting Ripeness -</h2>", unsafe_allow_html=True)
